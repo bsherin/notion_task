@@ -21,7 +21,8 @@ projects = [
     "Letters of rec",
     "CS+LS"
 ]
-## comment
+
+
 class ProjectForm(QWidget):
     def __init__(self):
         super().__init__()
@@ -57,7 +58,7 @@ class ProjectForm(QWidget):
         # Project dropdown
         self.project_label = QLabel("Project:")
         self.project_dropdown = QComboBox()
-        self.project_dropdown.addItems(["Aesthetics", "Tactic"])
+        self.project_dropdown.addItems(projects)
         layout.addWidget(self.project_label)
         layout.addWidget(self.project_dropdown)
 
@@ -110,6 +111,8 @@ class CalendarDialog(QDialog):
 
         # Connect the calendar click signal
         self.calendar.clicked.connect(self.date_selected)
+        parent_pos = parent.mapToGlobal(parent.date_entry.pos())
+        self.move(parent_pos.x(), parent_pos.y() + 30)
 
     def date_selected(self, date):
         self.selected_date = date
@@ -120,3 +123,6 @@ app = QApplication(sys.argv)
 form = ProjectForm()
 form.show()
 sys.exit(app.exec())
+
+# to build
+#  pyinstaller --noconsole --onefile --name "Notion Task" --windowed task_main_qt.py
