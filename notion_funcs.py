@@ -1,11 +1,8 @@
-import requests
 import sys
 import re
 import webbrowser
 import subprocess
 from notion_client import Client
-import json
-from datetime import date
 
 print('starting')
 print(sys.version)
@@ -26,12 +23,19 @@ def is_valid_url(url):
     )
     return re.match(pattern, url) is not None
 
+import os
+import sys
 
-token = "secret_Lk7cDO0HCXpI28dDLPaURvnxPYP8SrmiNOcFlaXzHRF"
-print("about to get client")
+def get_secret_file_path():
+    if getattr(sys, 'frozen', False):  # Running from a bundled PyInstaller app
+        base_path = sys._MEIPASS  # Temporary folder for bundled files
+    else:
+        base_path = os.path.dirname(__file__)  # Running as a normal script
 
-print("got notion client")
+    return os.path.join(base_path, "notion_secret.txt")
 
+f = open(get_secret_file_path())
+token = f.read().strip()
 
 def not_all_spaces(lin):
     return not len(re.sub(" ", "", lin)) == 0

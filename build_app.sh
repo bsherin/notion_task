@@ -1,0 +1,1 @@
+pyinstaller --noconsole --onedir --name "Notion Task" --windowed --add-data "notion_secret.txt:." task_main_qt.py

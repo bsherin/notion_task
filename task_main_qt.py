@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QComboBox,
     QPushButton, QMessageBox, QHBoxLayout, QDialog, QCalendarWidget
 )
-from PyQt6.QtCore import QDate
 from PyQt6 import QtCore
 import sys
 
@@ -158,4 +157,5 @@ form.show()
 sys.exit(app.exec())
 
 # to build
-#  pyinstaller --noconsole --onefile --name "Notion Task" --windowed task_main_qt.py
+#  pyinstaller --noconsole --onedir --name "Notion Task" --windowed --add-data "notion_secret.txt:." task_main_qt.py
+
