@@ -29,6 +29,7 @@ class ProjectForm(QWidget):
 
         self.setWindowTitle("Project Form with Calendar")
         self.setGeometry(100, 100, 400, 250)
+        self.center_window()
 
         layout = QVBoxLayout()
 
@@ -45,7 +46,7 @@ class ProjectForm(QWidget):
         date_layout = QHBoxLayout()
         self.date_entry = QLineEdit()
         self.date_entry.setPlaceholderText("YYYY-MM-DD")
-        self.date_entry.setText(QDate.currentDate().toString(QtCore.Qt.DateFormat.ISODate))
+        # self.date_entry.setText(QDate.currentDate().toString(QtCore.Qt.DateFormat.ISODate))
 
         self.calendar_button = QPushButton("📅")
         self.calendar_button.clicked.connect(self.show_calendar)
@@ -54,6 +55,22 @@ class ProjectForm(QWidget):
         date_layout.addWidget(self.calendar_button)
 
         layout.addLayout(date_layout)
+
+        # Due Date field with calendar picker
+        self.due_date_label = QLabel("Due Date:")
+        layout.addWidget(self.due_date_label)
+
+        due_date_layout = QHBoxLayout()
+        self.due_date_entry = QLineEdit()
+        self.due_date_entry.setPlaceholderText("YYYY-MM-DD")
+
+        self.due_calendar_button = QPushButton("📅")
+        self.due_calendar_button.clicked.connect(self.show_due_calendar)
+
+        due_date_layout.addWidget(self.due_date_entry)
+        due_date_layout.addWidget(self.due_calendar_button)
+
+        layout.addLayout(due_date_layout)
 
         # Project dropdown
         self.project_label = QLabel("Project:")
@@ -69,26 +86,42 @@ class ProjectForm(QWidget):
 
         self.setLayout(layout)
 
+    def center_window(self):
+        screen_geometry = QApplication.primaryScreen().geometry()
+        window_geometry = self.geometry()
+
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+
+        self.move(x, y)
+
     def show_calendar(self):
         dialog = CalendarDialog(self)
         if dialog.exec():  # This is now valid - QDialog has exec()
             selected_date = dialog.selected_date
             self.date_entry.setText(selected_date.toString(QtCore.Qt.DateFormat.ISODate))
 
+    def show_due_calendar(self):
+        dialog = CalendarDialog(self)
+        if dialog.exec():  # This is now valid - QDialog has exec()
+            selected_date = dialog.selected_date
+            self.due_date_entry.setText(selected_date.toString(QtCore.Qt.DateFormat.ISODate))
+
     def submit_form(self):
         name = self.name_entry.text()
         start_date = self.date_entry.text()
+        due_date = self.due_date_entry.text()
         project = self.project_dropdown.currentText()
 
-        if not name or not start_date or not project:
-            QMessageBox.critical(self, "Error", "All fields are required.")
+        if not name:
+            QMessageBox.critical(self, "Error", "Name is required.")
             return
 
         print(f"Name: {name}")
         print(f"Start Date: {start_date}")
         print(f"Project: {project}")
         # QMessageBox.information(self, "Submitted", f"Name: {name}\nStart Date: {start_date}\nProject: {project}")
-        build_notion_page(project, name, start_date)
+        build_notion_page(project, name, start_date, due_date)
 
 
 class CalendarDialog(QDialog):

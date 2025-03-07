@@ -40,7 +40,7 @@ def not_all_spaces(lin):
 project_db_id = "e22bc1f728bb48a794e162a209ebe024"
 
 
-def build_notion_page(project, subject, start_date):
+def build_notion_page(project, subject, start_date, due_date):
     notion = Client(auth=token)
     the_json = {
         "database_id": project_db_id,
@@ -66,19 +66,26 @@ def build_notion_page(project, subject, start_date):
 
     the_json = {"parent": {"database_id": "0eb71fcd9edb42e3aec60bdc739dbfb9"},
                 "properties": {"Name": {"title": [{"text": {"content": subject}}]},
-                               "Project": {"relation": [{"id": relation_id}], "has_more": False},
-                               "Start On": {
-                                    "date": {
-                                        "start": start_date
-                                    }
-                               }
+                               "Project": {"relation": [{"id": relation_id}], "has_more": False}
                                },
                 "children": [],
                 "icon": icon
     }
     email_url = read_from_clipboard()
-    if email_url is not None:
+    if email_url is not None and is_valid_url(email_url):
         the_json["properties"]["email"] = {"url": email_url}
+
+    if not start_date == "":
+        the_json["properties"]["Start On"] = {"date": {
+            "start": start_date
+            }
+        }
+
+    if not due_date == "":
+        the_json["properties"]["Due Date"] = {"date": {
+            "start": due_date
+            }
+        }
 
     print("about to post")
     result = notion.pages.create(**the_json)
